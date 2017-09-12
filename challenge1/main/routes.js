@@ -1,6 +1,8 @@
 const init = function RouteHandler(app) {
-  app.post('/message/:hash');
-  app.get('/message');
+  app.get('/message/:hash', (req, res)=>{
+    console.log(req.params.hash);
+  });
+  app.post('/message');
 }
 
 module.exports = init;
