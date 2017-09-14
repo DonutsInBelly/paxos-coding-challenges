@@ -10,27 +10,28 @@ if (process.argv.length !== 4) {
   process.exit(1);
 }
 
-// Hashtable to hold items
-var table = {};
-// Parse the CSV
+/*
+TODO:
+Make function and export that to allow for modularization
+*/
+
+// Parse the csv using fs to stream the csv and pipe it to csv.parse()
 fs.createReadStream(path.join(__dirname, process.argv[2]))
   .pipe(csv.parse({ delimiter: ',' }, (err, data)=>{
-    console.log(data);
-  });
+    // data is the 2D array respresentation of csv
+    // Hashtable to hold items
+    var table = {};
+    // Populate the Hashtable
+    for (var i = 0; i < data.length; i++) {
+      var row = data[i];
+      var key = parseInt(row[1]);
+      var value = row[0];
+      // If the key doesn't exist, create it and set it to empty array
+      if (!(key in table)) {
+        table[key] = [];
+      }
+      // Push value into array to allow for collisions
+      table[key].push(value);
+    }
+  })
 );
-
-// Populate initial table with values
-/*
-parser.from.path(process.argv[2]).to.array((row)=>{
-  var key = row[1];
-  var value = row[0];
-  // If the key doesn't exist, create it and set it to empty array
-  if (!(key in table)) {
-    table[key] = [];
-  }
-  // Push value into array to allow for collisions
-  table[key].push(value);
-});
-
-console.log(table);
-*/
