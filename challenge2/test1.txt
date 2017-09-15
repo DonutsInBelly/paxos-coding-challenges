@@ -1,3 +1,6 @@
+MacBook, 99999
+iPhone X, 99999
+Coffee, 10000
 Candy Bar, 500
 Paperback Book, 700
 Detergent, 1000
