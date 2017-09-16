@@ -7,3 +7,5 @@ Detergent, 1000
 Headphones, 1400
 Earmuffs, 2000
 Bluetooth Stereo, 6000
+something, 100000
+else, 500
