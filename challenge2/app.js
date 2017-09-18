@@ -3,7 +3,6 @@ const csv = require('csv');
 const fs  = require('fs');
 const path = require('path');
 
-
 // Usage:
 // filepath: String containing the path of the target csv
 // sum: Number representing the balance of the giftcard
@@ -29,7 +28,7 @@ var giftFinder = function findGifts(filepath, sum, callback) {
         if (!(key in table)) {
           table[key] = [];
         }
-        // Push value into array to allow for collisions
+        // Chain values
         table[key].push(value);
       }
       // Find items
@@ -37,30 +36,25 @@ var giftFinder = function findGifts(filepath, sum, callback) {
       keys.forEach((currentValue, index, array)=>{
         array[index] = parseInt(currentValue);
       });
-      console.log(keys);
       var solutionFound = false;
       var ptrleft = 0;
       var ptrright = keys.length-1;
-      for (var i = 0; i < keys.length; i++) {
-        let key = keys[i];
-        let remaining = sum - keys[ptrleft];
 
+      while (!solutionFound) {
+        let remaining = sum - keys[ptrleft];
+        // Move right pointer until the RightVal + LeftVal <= sum
         if (keys[ptrright] > remaining) {
           ptrright = ptrright - 1;
-          console.log('ptrright: ' + ptrright);
           continue;
         }
+        // Compare differences between current LeftVal and the next LeftVal
         let curdiff = sum - (keys[ptrleft] + keys[ptrright]);
         let nextdiff = sum - (keys[ptrleft+1] + keys[ptrright]);
-        console.log('curdiff: ' + curdiff);
-        console.log('nextdiff: ' + nextdiff);
-        if (nextdiff < curdiff && nextdiff > 0) {
+        if (nextdiff < curdiff && nextdiff >= 0) {
+          // Move if next LeftVal brings us closer to the sum
           ptrleft = ptrleft + 1;
-          console.log('ptrleft: ' + ptrleft);
           continue;
         } else {
-          console.log(keys[ptrleft]);
-          console.log(keys[ptrright]);
           solutionFound = true;
           break;
         }
@@ -69,11 +63,13 @@ var giftFinder = function findGifts(filepath, sum, callback) {
         callback(new Error("Not possible"));
         return;
       }
+      // Build 2D Result Array
       var results = [];
       let item1 = table[keys[ptrleft]];
       let item2 = table[keys[ptrright]];
       let result1 = Array.of(item1[0], keys[ptrleft]);
       let result2 = Array.of(item2[0], keys[ptrright]);
+      // Check for duplicates
       if (ptrleft === ptrright) {
         if (!(table[keys[ptrleft]].length >= 2)) {
           callback(new Error("Not possible"));
@@ -89,6 +85,7 @@ var giftFinder = function findGifts(filepath, sum, callback) {
   );
 };
 
+// If run from the command line
 if (require.main === module) {
   // Check Command line Arguments
   if (process.argv.length !== 4) {

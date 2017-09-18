@@ -1,11 +1,12 @@
-MacBook, 99999
-iPhone X, 99999
-Coffee, 10000
+ayyyyyy, 400
+else, 500
 Candy Bar, 500
 Paperback Book, 700
 Detergent, 1000
 Headphones, 1400
 Earmuffs, 2000
 Bluetooth Stereo, 6000
+Coffee, 10000
+iPhone X, 99999
+MacBook, 99999
 something, 100000
-else, 500
