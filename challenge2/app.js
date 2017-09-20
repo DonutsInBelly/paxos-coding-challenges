@@ -36,46 +36,66 @@ var giftFinder = function findGifts(filepath, sum, callback) {
       keys.forEach((currentValue, index, array)=>{
         array[index] = parseInt(currentValue);
       });
-      var solutionFound = false;
-      var ptrleft = 0;
-      var ptrright = keys.length-1;
+      var best1;
+      var best2;
+      // Iterate through potential pairs
+      for (var curr1 = 0; curr1 < keys.length; curr1++) {
+        var diff = sum - keys[curr1];
 
-      while (!solutionFound) {
-        let remaining = sum - keys[ptrleft];
-        // Move right pointer until the RightVal + LeftVal <= sum
-        if (keys[ptrright] > remaining) {
-          ptrright = ptrright - 1;
-          continue;
+        // Binary Search for best possible match
+        var curr2 = -1;
+        var nextIndex = Math.floor((keys.length - 1)/2);
+        var minIndex = 0;
+        var maxIndex = keys.length-1;
+        while (nextIndex != curr2) {
+          curr2 = nextIndex;
+          // Break if we found a valid pair, continue otherwise
+          if (diff == keys[curr2]) {
+            // Detect duplicate prices and check if there's 2 unique items
+            if (keys[curr1] == keys[curr2] && table[keys[curr1]].length >= 2) {
+              break;
+            } else if (keys[curr1] != keys[curr2]) {
+              break;
+            }
+          }
+          if (diff > keys[curr2]) {
+            minIndex = curr2;
+            nextIndex = Math.floor(((maxIndex-minIndex)/2) + curr2);
+            continue;
+          }
+          if (diff <= keys[curr2]) {
+            maxIndex = curr2;
+            nextIndex = Math.floor(curr2 - ((maxIndex-minIndex)/2));
+            continue;
+          }
         }
-        // Compare differences between current LeftVal and the next LeftVal
-        let curdiff = sum - (keys[ptrleft] + keys[ptrright]);
-        let nextdiff = sum - (keys[ptrleft+1] + keys[ptrright]);
-        if (nextdiff < curdiff && nextdiff >= 0) {
-          // Move if next LeftVal brings us closer to the sum
-          ptrleft = ptrleft + 1;
-          continue;
-        } else {
-          solutionFound = true;
-          break;
+        // Compare sums
+        let bestdiff = sum - (keys[best1] + keys[best2]);
+        let currdiff = sum - (keys[curr1] + keys[curr2]);
+        // current is better than best values or if best has no values
+        if ((currdiff < bestdiff && currdiff >= 0) || (best1 === undefined && best2 === undefined)) {
+          best1 = curr1;
+          best2 = curr2;
         }
       }
-      if (!solutionFound) {
-        callback(new Error("Not possible"));
+      // If there's no possible combination of gifts, set Not Possible Error
+      if ((keys[best1] === undefined && keys[best2] === undefined) || (sum - (keys[best1] + keys[best2]) < 0)) {
+        callback("Not possible");
         return;
       }
       // Build 2D Result Array
       var results = [];
-      let item1 = table[keys[ptrleft]];
-      let item2 = table[keys[ptrright]];
-      let result1 = Array.of(item1[0], keys[ptrleft]);
-      let result2 = Array.of(item2[0], keys[ptrright]);
+      let item1 = table[keys[best1]];
+      let item2 = table[keys[best2]];
+      let result1 = Array.of(item1[0], keys[best1]);
+      let result2 = Array.of(item2[0], keys[best2]);
       // Check for duplicates
-      if (ptrleft === ptrright) {
-        if (!(table[keys[ptrleft]].length >= 2)) {
-          callback(new Error("Not possible"));
+      if (best1 === best2) {
+        if (!(table[keys[best1]].length >= 2)) {
+          callback("Not possible");
           return;
         } else {
-          result2 = Array.of(item2[1], keys[ptrright]);
+          result2 = Array.of(item2[1], keys[best2]);
         }
       }
       results.push(result1);

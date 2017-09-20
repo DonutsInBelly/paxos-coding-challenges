@@ -1,3 +1,4 @@
+penny, 1
 ayyyyyy, 400
 else, 500
 Candy Bar, 500
