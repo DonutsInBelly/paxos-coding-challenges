@@ -1,5 +1,8 @@
 // Dependencies
+var heapdump = require('heapdump');
 const { Readable } = require('stream');
+
+var fs = require('fs');
 
 // Usage:
 // https://nodejs.org/api/stream.html#stream_implementing_a_readable_stream
@@ -30,7 +33,6 @@ class XReplacer extends Readable {
     var blankSpots = [];
     var counter = [];
     var state = [];
-    var results = [];
 
     // Find x indices and add them to blankSpots
     for (var i = 0; i < this._input.length; i++) {
@@ -93,22 +95,25 @@ class XReplacer extends Readable {
 
 // When run from the command line
 if (require.main === module) {
+  var stats = [];
   // check command line arguments
   if (process.argv.length != 3) {
     console.log("Error: Incorrect amount of arguments");
     console.log("node app.js [string of 1's, 0's, and X's]");
-    // process.exit(1);
+    process.exit(1);
   }
   // Grab input from command line
   var inputString = process.argv[2];
   var xr = new XReplacer({encoding: 'utf8'});
   xr.load(inputString);
   xr.on('data', (data)=>{
-    console.log(data);
+    heapdump.writeSnapshot();
+    process.stdout.write(data);
   });
   xr.on('end', ()=>{
     process.exit(0);
   });
 }
+
 
 module.exports = XReplacer;
