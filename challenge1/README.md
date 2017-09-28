@@ -2,7 +2,7 @@
 
 __POST__ __https://carlin-paxos-challenge1.herokuapp.com/messages__
 
-__GET__ __https://carlin-paxos-challenge1.herokuapp.com/messages/<hash>__
+__GET__ __https://carlin-paxos-challenge1.herokuapp.com/messages/< hash >__
 
 ### How to run this locally
 * Ensure you have Node.js v8.1.4 or above and NPM v5.4.1 or above
